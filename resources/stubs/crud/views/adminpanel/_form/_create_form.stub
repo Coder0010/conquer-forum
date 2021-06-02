@@ -1,0 +1,113 @@
+@component("adminpanel.components.form-component")
+
+    @slot("permission", "Create_{{word}}")
+
+    @slot("formID", "{{wordSingularLowerCase}}CreateFormID")
+
+    @slot("formAction", route("admin.{{wordPluralLowerCase}}.store"))
+
+    @slot("formInputs")
+        @php
+            ${{wordSingularLowerCase}}_create_en_errors = "";
+            ${{wordSingularLowerCase}}_create_ar_errors = "";
+            ${{wordSingularLowerCase}}_create_inputs = ["{{wordSingularLowerCase}}_create_name", "{{wordSingularLowerCase}}_create_description",];
+        @endphp
+        @foreach (${{wordSingularLowerCase}}_create_inputs as $item)
+            @error("{$item}_en")
+                @php
+                    ${{wordSingularLowerCase}}_create_en_errors = "text-danger en";
+                @endphp
+                @break
+            @enderror
+        @endforeach
+        @foreach (${{wordSingularLowerCase}}_create_inputs as $item)
+            @error("{$item}_ar")
+                @php
+                    ${{wordSingularLowerCase}}_create_ar_errors = "text-danger ar";
+                @endphp
+                @break
+            @enderror
+        @endforeach
+
+        <div class='card card-custom gutter-b'>
+            <div class='card-header card-header-tabs-line'>
+                <div class='card-title'>
+                    <h3 class='card-label'>{{ __("main.create") }}</h3>
+                </div>
+                <div class='card-toolbar'>
+                    <ul class='nav nav-tabs nav-bold nav-tabs-line'>
+                        @if(count(AppLanguages()) > 1)
+                            @foreach (AppLanguages() as $lang)
+                                <li class='nav-item'>
+                                    <a class='nav-link {{ $lang == "en" ? ${{wordSingularLowerCase}}_create_en_errors : ${{wordSingularLowerCase}}_create_ar_errors }} {{ $loop->first ? "active" : "" }}' href='#{{ "create-{{wordSingularLowerCase}}-{$lang}-tab" }}' data-toggle='tab'>
+                                        <span class='symbol symbol-20 m-2'>
+                                            <img src='{{ asset(GetLanguageValues($lang, "flag")) }}' alt='{{ GetLanguageValues($lang,'name') }}'/>
+                                        </span>
+                                        <span class='navi-text'> {{ GetLanguageValues($lang, "name") }} </span>
+                                    </a>
+                                </li>
+                            @endforeach
+                        @endif
+                    </ul>
+                </div>
+            </div>
+            <div class='card-body'>
+                <div class='tab-content'>
+                    @foreach (AppLanguages() as $lang)
+                        <div class='tab-pane fade {{ $loop->first ? "active show" : '' }}' id='{{ "create-{{wordSingularLowerCase}}-{$lang}-tab" }}' role="tabpanel" aria-labelledby='{{ "create-{{wordSingularLowerCase}}-{$lang}-tab" }}'>
+                            @component("adminpanel.components.html-tags.general")
+                                @slot("tagName", "{{wordSingularLowerCase}}_create_name_{$lang}")
+                                @slot("tagTitle", __("main.name_{$lang}"))
+                                @slot("tagValue", old("{{wordSingularLowerCase}}_create_name_{$lang}"))
+                            @endcomponent
+                            @component("adminpanel.components.html-tags.textarea")
+                                @slot("tagEditor", true)
+                                @slot("tagName", "{{wordSingularLowerCase}}_create_description_{$lang}")
+                                @slot("tagTitle", __("main.description_{$lang}"))
+                                @slot("tagValue") {!! old("{{wordSingularLowerCase}}_create_description_{$lang}") !!} @endslot
+                            @endcomponent
+                        </div>
+                    @endforeach
+
+                    <div class="separator separator-solid separator-border-2 separator-dark mb-3"></div>
+
+                    @component("adminpanel.components.html-tags.image")
+                        @slot("tagTitle", __("main.image"))
+                        @slot("tagName", "{{wordSingularLowerCase}}_create_image")
+                    @endcomponent
+
+                    <h5>{{ __("main.other_images") }}</h5>
+                    <div class="dropzone text-center" id="{{wordSingularLowerCase}}CreateContainerDropzoneID">
+                        <div class="dz-message">
+                            <div class="icon"><span class="fas fa-cloud-upload-alt fa-5x fa-fw"></span></div>
+                            <h2>{{ __("main.other_images") }}</h2>
+                            <div class="dropzone-mobile-trigger needsclick"></div>
+                        </div>
+                    </div>
+
+                    {{-- @component("adminpanel.components.html-tags.select")
+                        @slot("tagOptions", [])
+                        @slot("tagTitle", __("main.main"))
+                        @slot("tagName", "_id")
+                        @slot("tagValue", old("_id"))
+                    @endcomponent --}}
+                </div>
+            </div>
+        </div>
+    @endslot
+
+    @slot("formScripts")
+        @if(!Route::is("admin.{{wordPluralLowerCase}}.create"))
+            <script>
+                function {{wordSingularLowerCase}}CreateModalJsFunction(){
+                    initCreateDropzone("#{{wordSingularLowerCase}}CreateFormID", "#{{wordSingularLowerCase}}CreateContainerDropzoneID");
+                    toggleModalCreate("{{wordSingularLowerCase}}");
+                }
+            </script>
+        @elseif(Route::is("admin.{{wordPluralLowerCase}}.create"))
+            <script>
+                initCreateDropzone("#{{wordSingularLowerCase}}CreateFormID", "#{{wordSingularLowerCase}}CreateContainerDropzoneID");
+            </script>
+        @endif
+    @endslot
+@endcomponent

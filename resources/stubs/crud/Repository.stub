@@ -1,0 +1,9 @@
+<?php
+
+namespace App\{{domainParentName}}\{{domainName}}\Repositories\Contracts;
+
+use App\Core\Contracts\BaseRepository;
+
+interface {{word}}Repository extends BaseRepository
+{
+}

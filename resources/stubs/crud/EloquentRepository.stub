@@ -1,0 +1,20 @@
+<?php
+
+namespace App\{{domainParentName}}\{{domainName}}\Repositories\Eloquent;
+
+use App\Core\Abstracts\EloquentRepository;
+use App\{{domainParentName}}\{{domainName}}\Entities\{{word}};
+use App\{{domainParentName}}\{{domainName}}\Repositories\Contracts\{{word}}Repository;
+
+class Eloquent{{word}}Repository extends EloquentRepository implements {{word}}Repository
+{
+    /**
+     * The Repository Entity.
+     *
+     * @return stdClass
+     */
+    public function entity()
+    {
+        return {{word}}::class;
+    }
+}

@@ -1,0 +1,52 @@
+<?php
+
+namespace App\{{domainParentName}}\{{domainName}}\Http\Controllers\{{nameSpace}};
+
+use App\Core\Abstracts\AdminResourceController;
+use App\{{domainParentName}}\{{domainName}}\Repositories\Contracts\{{word}}Repository;
+use App\{{domainParentName}}\{{domainName}}\Http\Requests\{{nameSpace}}\{{typePerfix}}{{wordPluralCase}}Request;
+
+class {{typePerfix}}{{wordPluralCase}}Controller extends AdminResourceController
+{
+    /**
+     * @param {{word}}Repository; $repository
+     */
+    public function __construct({{word}}Repository $repository)
+    {
+        parent::__construct();
+
+        $this->repository = $repository;
+
+        $this->domainAlias = "{{domainAlias}}";
+
+        $this->crudName = "{{wordPluralLowerCase}}";
+
+        $this->resourceRequestValidation = {{typePerfix}}{{wordPluralCase}}Request::class;
+
+        $this->resourcePermissions = [
+            "show"    => "Show_{{word}}",
+            "create"  => "Create_{{word}}",
+            "edit"    => "Edit_{{word}}",
+            "delete"  => "Delete_{{word}}",
+            "statu"   => "Statu_{{word}}",
+        ];
+
+        $this->resourceCreateRequestInputs = [
+            "name_en"        => request("{{wordSingularLowerCase}}_create_name_en"),
+            "name_ar"        => request("{{wordSingularLowerCase}}_create_name_ar"),
+            "data"           => [
+                "description_en" => request("{{wordSingularLowerCase}}_create_description_en"),
+                "description_ar" => request("{{wordSingularLowerCase}}_create_description_ar"),
+            ]
+        ];
+
+        $this->resourceEditRequestInputs = [
+            "name_en"        => request("{{wordSingularLowerCase}}_edit_name_en"),
+            "name_ar"        => request("{{wordSingularLowerCase}}_edit_name_ar"),
+            "data"           => [
+                "description_en" => request("{{wordSingularLowerCase}}_edit_description_en"),
+                "description_ar" => request("{{wordSingularLowerCase}}_edit_description_ar"),
+            ]
+        ];
+    }
+}

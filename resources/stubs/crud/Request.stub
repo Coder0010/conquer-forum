@@ -1,0 +1,39 @@
+<?php
+
+namespace App\{{domainParentName}}\{{domainName}}\Http\Requests\{{nameSpace}};
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class {{typePerfix}}{{wordPluralCase}}Request extends FormRequest
+{
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        if(request()->isMethod("post")){
+            return [
+                "{{wordSingularLowerCase}}_create_name_en"        => config("rules.name_en")."|unique:{{wordPluralLowerCase}},name_en",
+                "{{wordSingularLowerCase}}_create_name_ar"        => config("rules.name_ar")."|unique:{{wordPluralLowerCase}},name_ar",
+                "{{wordSingularLowerCase}}_create_description_en" => config("rules.description_en"),
+                "{{wordSingularLowerCase}}_create_description_ar" => config("rules.description_ar"),
+                "{{wordSingularLowerCase}}_create_image"          => config("rules.edit_image"),
+            ];
+        }elseif(request()->isMethod("patch")){
+            return [
+                "{{wordSingularLowerCase}}_edit_name_en"         => config("rules.name_en")."|unique:{{wordPluralLowerCase}},name_en,".request("{{wordSingularLowerCase}}"),
+                "{{wordSingularLowerCase}}_edit_name_ar"         => config("rules.name_ar")."|unique:{{wordPluralLowerCase}},name_ar,".request("{{wordSingularLowerCase}}"),
+                "{{wordSingularLowerCase}}_edit_description_en"  => config("rules.edit_description_en"),
+                "{{wordSingularLowerCase}}_edit_description_ar"  => config("rules.edit_description_ar"),
+                "{{wordSingularLowerCase}}_edit_image"           => config("rules.edit_image"),
+            ];
+        }elseif(request()->isMethod("delete")){
+            return [
+
+            ];
+        }
+    }
+
+}

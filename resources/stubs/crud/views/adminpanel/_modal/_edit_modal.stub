@@ -1,0 +1,17 @@
+@component("adminpanel.components.modal-component")
+    @slot("modalID", "{{wordSingularLowerCase}}EditModalID")
+
+    @slot("permission", "Edit_{{word}}")
+
+    @slot("formStructure")
+        @include("{$domainAlias}::{$nameSpace}.{$crudName}._form._edit_form")
+    @endslot
+
+    @slot("formErrors", [
+        "{{wordSingularLowerCase}}_edit_name_en",
+        "{{wordSingularLowerCase}}_edit_name_ar",
+        "{{wordSingularLowerCase}}_edit_description_en",
+        "{{wordSingularLowerCase}}_edit_description_ar",
+        "{{wordSingularLowerCase}}_edit_image",
+    ])
+@endcomponent

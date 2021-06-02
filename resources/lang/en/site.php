@@ -1,0 +1,25 @@
+<?php
+
+return [
+    '' => '',
+    '' => '',
+    '' => '',
+    '' => '',
+    'rank' => 'rank',
+    'update_user' => 'update user',
+    'description' => 'description',
+    'subject' => 'subject',
+    'sign_out' => 'sign out',
+    'profile' => 'profile',
+    'already_have_account' => 'already have account',
+    'password_confirmation' => 'password confirmation',
+    'username' => 'username',
+    'name' => 'name',
+    'password' => 'password',
+    'email' => 'email',
+    'forgot_my_password' => 'forgot my password',
+    'contact_us' => 'contact us',
+    'register' => 'register',
+    'login' => 'login',
+    'index' => 'index',
+];

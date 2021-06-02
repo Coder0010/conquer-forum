@@ -1,0 +1,157 @@
+@component("adminpanel.components.form-component")
+
+    @slot("permission", "Edit_{{word}}")
+
+    @slot("formID", "{{wordSingularLowerCase}}EditFormID")
+
+    @slot("formMethod", "patch")
+
+    @if(Route::is("admin.{{wordPluralLowerCase}}.edit"))
+        @slot("formAction", route("admin.{{wordPluralLowerCase}}.update", $edit->id))
+    @endif
+
+    @slot("formInputs")
+        @php
+            ${{wordSingularLowerCase}}_edit_en_errors = "";
+            ${{wordSingularLowerCase}}_edit_ar_errors = "";
+            ${{wordSingularLowerCase}}_edit_inputs = ["{{wordSingularLowerCase}}_edit_name", "{{wordSingularLowerCase}}_edit_description"];
+        @endphp
+        @foreach (${{wordSingularLowerCase}}_edit_inputs as $item)
+            @error("{$item}_en")
+                @php
+                    ${{wordSingularLowerCase}}_edit_en_errors = "text-danger en";
+                @endphp
+                @break
+            @enderror
+        @endforeach
+        @foreach (${{wordSingularLowerCase}}_edit_inputs as $item)
+            @error("{$item}_ar")
+                @php
+                    ${{wordSingularLowerCase}}_edit_ar_errors = "text-danger ar";
+                @endphp
+                @break
+            @enderror
+        @endforeach
+
+        <div class='card card-custom gutter-b'>
+            <div class='card-header card-header-tabs-line'>
+                <div class='card-title'>
+                    <h3 class='card-label'>{{ __("main.edit") }}</h3>
+                </div>
+                <div class='card-toolbar'>
+                    <ul class='nav nav-tabs nav-bold nav-tabs-line'>
+                        @if(count(AppLanguages()) > 1)
+                            @foreach (AppLanguages() as $lang)
+                                <li class='nav-item'>
+                                    <a class='nav-link {{ $lang == "en" ? ${{wordSingularLowerCase}}_edit_en_errors : ${{wordSingularLowerCase}}_edit_ar_errors }} {{ $loop->first ? "active" : "" }}' href='#{{ "edit-{{wordSingularLowerCase}}-{$lang}-tab" }}' data-toggle='tab'>
+                                        <span class='symbol symbol-20 m-2'>
+                                            <img src='{{ asset(GetLanguageValues($lang, "flag")) }}' alt='{{ GetLanguageValues($lang,'name') }}'/>
+                                        </span>
+                                        <span class='navi-text'> {{ GetLanguageValues($lang, "name") }} </span>
+                                    </a>
+                                </li>
+                            @endforeach
+                        @endif
+                    </ul>
+                </div>
+            </div>
+            <div class='card-body'>
+                <div class='tab-content'>
+                    @foreach (AppLanguages() as $lang)
+                        <div class='tab-pane fade {{ $loop->first ? "active show" : '' }}' id='{{ "edit-{{wordSingularLowerCase}}-{$lang}-tab" }}' role="tabpanel" aria-labelledby='{{ "edit-{{wordSingularLowerCase}}-{$lang}-tab" }}'>
+                            @component("adminpanel.components.html-tags.general")
+                                @slot("tagName", "{{wordSingularLowerCase}}_edit_name_{$lang}")
+                                @slot("tagTitle", __("main.name_{$lang}"))
+                                @if(Route::is("admin.{{wordPluralLowerCase}}.edit"))
+                                    @slot("tagValue", $edit["name_{$lang}"])
+                                @endif
+                            @endcomponent
+                            @component("adminpanel.components.html-tags.textarea")
+                                @slot("tagEditor", true)
+                                @slot("tagName", "{{wordSingularLowerCase}}_edit_description_{$lang}")
+                                @slot("tagTitle", __("main.description_{$lang}"))
+                                @if(Route::is("admin.{{wordPluralLowerCase}}.edit"))
+                                    @slot("tagValue") {!! $edit["description_{$lang}"] !!} @endslot
+                                @endif
+                            @endcomponent
+                        </div>
+                    @endforeach
+
+                    <div class="separator separator-solid separator-border-2 separator-dark mb-3"></div>
+
+                    @component("adminpanel.components.html-tags.image")
+                        @slot("tagTitle", __("main.image"))
+                        @slot("tagName", "{{wordSingularLowerCase}}_edit_image")
+                    @endcomponent
+
+                    <h5>{{ __("main.other_images") }}</h5>
+                    <div class="dropzone text-center" id="{{wordSingularLowerCase}}EditContainerDropzoneID">
+                        <div class="dz-message">
+                            <div class="icon"><span class="fas fa-cloud-upload-alt fa-5x fa-fw"></span></div>
+                            <h2>{{ __("main.other_images") }}</h2>
+                            <div class="dropzone-mobile-trigger needsclick"></div>
+                        </div>
+                    </div>
+
+                    {{-- @component("adminpanel.components.html-tags.select")
+                        @slot("tagOptions", [])
+                        @slot("tagTitle", __("main.main"))
+                        @slot("tagName", "_id")
+                        @if(Route::is("admin.{{wordPluralLowerCase}}.edit"))
+                            @slot("tagValue", $edit->id)
+                        @endif
+                    @endcomponent --}}
+                </div>
+            </div>
+        </div>
+    @endslot
+
+    @slot("formScripts")
+        @if(!Route::is("admin.{{wordPluralLowerCase}}.edit"))
+            <script>
+                function {{wordSingularLowerCase}}EditModalJsFunction(id){
+                    if(id !== null && id !== ""){
+                        KTApp.blockPage();
+
+                        var edit = "{{ route('admin.{{wordPluralLowerCase}}.edit', ':id') }}",
+                        edit_route = edit.replace(":id", id),
+
+                        update = "{{ route('admin.{{wordPluralLowerCase}}.update', ':id') }}",
+                        update_route = update.replace(":id", id);
+                        var form  = document.getElementById("{{wordSingularLowerCase}}EditFormID");
+                            form.action = update_route,
+                            form.reset();
+                        $.get({
+                            url:  edit_route,
+                            success: function(res, xhr){
+                                if(xhr == "success"){
+                                    $("#{{wordSingularLowerCase}}_edit_name_en").val(res.payload.entity.name_en);
+                                    $("#{{wordSingularLowerCase}}_edit_name_ar").val(res.payload.entity.name_ar);
+                                    if(res.payload.entity.data){
+                                        document.querySelector("#{{wordSingularLowerCase}}_edit_description_en").innerHTML = res.payload.entity.data.description_en;
+                                        if($("#{{wordSingularLowerCase}}_edit_description_ar").length > 0){
+                                            document.querySelector("#{{wordSingularLowerCase}}_edit_description_ar").innerHTML = res.payload.entity.data.description_ar;
+                                        }
+                                    }
+                                    $("#holder_{{wordSingularLowerCase}}_edit_image .image-input-wrapper").css({"background-image": "url("+res.payload.entity.image+")"});
+                                    initEditDropzone("#{{wordSingularLowerCase}}EditFormID", "#{{wordSingularLowerCase}}EditContainerDropzoneID", res.payload.entity.other_media);
+
+                                    toggleModalEdit("{{wordSingularLowerCase}}", form, res.payload.entity.id);
+                                }else{
+                                    errorMessage(res.payload);
+                                }
+                            },
+                            error: function(res){
+                                errorMessage(res);
+                            },
+                        });
+                    }
+                }
+            </script>
+        @elseif(Route::is("admin.{{wordPluralLowerCase}}.edit"))
+            <script>
+                initEditDropzone("#{{wordSingularLowerCase}}EditFormID", "#{{wordSingularLowerCase}}EditContainerDropzoneID", $edit->getMedia("{{word}}-Collection"));
+            </script>
+        @endif
+    @endslot
+@endcomponent

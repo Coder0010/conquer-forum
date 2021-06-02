@@ -1,0 +1,17 @@
+@component("adminpanel.components.modal-component")
+    @slot("modalID", "{{wordSingularLowerCase}}CreateModalID")
+
+    @slot("permission", "Create_{{word}}")
+
+    @slot("formStructure")
+        @include("{$domainAlias}::{$nameSpace}.{$crudName}._form._create_form")
+    @endslot
+
+    @slot("formErrors", [
+        "{{wordSingularLowerCase}}_create_name_en",
+        "{{wordSingularLowerCase}}_create_name_ar",
+        "{{wordSingularLowerCase}}_create_description_en",
+        "{{wordSingularLowerCase}}_create_description_ar",
+        "{{wordSingularLowerCase}}_create_image",
+    ])
+@endcomponent
